@@ -1,20 +1,25 @@
-# Используем официальный образ Ubuntu с установленным CMake
 FROM ubuntu:22.04
 
-# Установка необходимых пакетов
-RUN apt update && \
-    apt install -y cmake build-essential git && \
-    apt clean && \
+RUN apt-get update && \
+    apt-get install -y build-essential cmake git && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Рабочая директория внутри контейнера
 WORKDIR /app
 
-# Копируем CMakeLists.txt и исходные файлы (или будем передавать при сборке)
-COPY . .
+COPY CMakeLists.txt ./
+COPY formatter_lib ./formatter_lib/
+COPY formatter_ex_lib ./formatter_ex_lib/
+COPY solver_lib ./solver_lib/
+COPY hello_world_application ./hello_world_application/
+COPY solver_application ./solver_application/
 
-# Директория для логов
-RUN mkdir -p /logs
+RUN echo '#!/bin/bash\n' > /build_and_log.sh && \
+    echo 'set -e' >> /build_and_log.sh && \
+    echo 'mkdir -p /build && cd /build || exit 1' >> /build_and_log.sh && \
+    echo 'cmake /app | tee -a /build/build.log' >> /build_and_log.sh && \
+    echo 'make | tee -a /build/build.log' >> /build_and_log.sh && \
+    echo 'echo "Build log saved at /build/build.log"' >> /build_and_log.sh && \
+    chmod +x /build_and_log.sh
 
-# Команда по умолчанию: сборка проекта и запись лога
-CMD ["sh", "-c", "cmake -S . -B build > /logs/build.log 2>&1 && cmake --build build >> /logs/build.log 2>&1"]
+CMD ["/build_and_log.sh"]
