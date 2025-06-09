@@ -1,19 +1,14 @@
-name: Build Project in Docker and Save Logs
+name: Build in Docker and Save Log Artifact
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # Возможность запуска вручную из интерфейса
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: 
-      image: ubuntu:22.04
-      options: |
-        --privileged
-        --cap-add=SYS_ADMIN
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,17 +22,16 @@ jobs:
         run: |
           docker build -t lab3-4-builder .
 
-      - name: Run Docker container
+      - name: Run container to build project
         run: |
-          docker run --rm lab3-4-builder
+          docker run --rm -v $(pwd)/logs:/logs lab3-4-builder
 
-      - name: Copy logs from container
+      - name: Check log file
         run: |
-          docker run --rm -v $(pwd)/logs:/logs lab3-4-builder cp /logs/build.log /logs/
+          cat logs/build.log || echo "Log file not found"
 
-      - name: Upload log file as artifact
+      - name: Upload log as artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-log
           path: logs/build.log
-
