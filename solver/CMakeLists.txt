@@ -1,6 +1,6 @@
-<<<<<<< HEAD
 # lab3-4/solver/CMakeLists.txt
-
+cmake_minimum_required(VERSION 3.10)
+project(Solver)
 add_executable(solver main.cpp)
 
 # Линкуемся с правильными целями: formatter, а не formatter_lib
@@ -11,31 +11,7 @@ install(TARGETS solver DESTINATION bin)
 
 # Если хочешь, можно установить и README или другие файлы:
 install(FILES README.md DESTINATION . OPTIONAL)
-=======
-cmake_minimum_required(VERSION 3.10)
-project(Solver)
 
 # Создаем исполняемый файл 'solver' из main.cpp
-add_executable(solver main.cpp)
 
 # Линкуем 'solver' с библиотекой 'formatter_ex'.
-target_link_libraries(solver PRIVATE formatter_ex)
-target_link_libraries(solver PRIVATE solver_lib)
-# --- Важное пояснение по 'solver_lib' ---
-# В вашем описании задания указано, что приложение 'solver' "использует статические библиотеки formatter_ex и solver_lib".
-# Однако, согласно предоставленной вами структуре каталогов (вывод `ls` для `lab3/solver`),
-# внутри каталога `solver` присутствует только `main.cpp` и `CMakeLists.txt`.
-# Отдельной библиотеки `solver_lib` в структуре, переданной вами, не существует.
-#
-# Если `solver_lib` является отдельной статической библиотекой (аналогично `formatter_lib`),
-# то ее `CMakeLists.txt` должен был бы находиться в своем подкаталоге (например, `lab3/solver_lib`),
-# и этот подкаталог должен быть добавлен в корневой `lab3/CMakeLists.txt` (например, `add_subdirectory(solver_lib)`).
-# Только после этого `solver` смог бы прилинковаться к ней.
-#
-# Пример того, как это выглядело бы, если бы `solver_lib` существовала как отдельная цель:
-# target_link_libraries(solver PRIVATE solver_lib) # Эту строку нужно было бы добавить
-#
-# В текущей реализации, `solver` будет использовать только `formatter_ex`.
-# Если `solver_lib` подразумевается как функциональность, реализованная непосредственно в `main.cpp`
-# и не выделяемая в отдельную библиотеку, то никаких дополнительных действий в CMake не требуется.
->>>>>>> 720e04f1f9b4691bdc8469a10af70a8bd070fe06
