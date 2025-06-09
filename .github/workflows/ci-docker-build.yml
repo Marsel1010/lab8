@@ -1,0 +1,43 @@
+name: Build Project in Docker and Save Logs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: 
+      image: ubuntu:22.04
+      options: |
+        --privileged
+        --cap-add=SYS_ADMIN
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install docker.io
+
+      - name: Build Docker image
+        run: |
+          docker build -t lab3-4-builder .
+
+      - name: Run Docker container
+        run: |
+          docker run --rm lab3-4-builder
+
+      - name: Copy logs from container
+        run: |
+          docker run --rm -v $(pwd)/logs:/logs lab3-4-builder cp /logs/build.log /logs/
+
+      - name: Upload log file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-log
+          path: logs/build.log
+
