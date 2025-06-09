@@ -11,8 +11,8 @@ COPY CMakeLists.txt ./
 COPY formatter_lib ./formatter_lib/
 COPY formatter_ex_lib ./formatter_ex_lib/
 COPY solver_lib ./solver_lib/
-COPY hello_world_application ./hello_world_application/
-COPY solver_application ./solver_application/
+COPY hello_world ./hello_world/
+COPY solver ./solver/
 
 RUN echo '#!/bin/bash\n' > /build_and_log.sh && \
     echo 'set -e' >> /build_and_log.sh && \
